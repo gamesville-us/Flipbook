@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GamesVille Flipbook</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+
+body {
+  background:url("bk1.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* ---------------- TITLE ANIMATION ---------------- */
+h1 {
+  font-size: 48px;
+  color: #001844;
+  margin-top: 30px;
+  margin-bottom: 0;
+  font-family: Arial, sans-serif;
+  font-weight: 900;
+  text-align: center;
+
+  opacity: 0;
+  transform: translateY(-50px);
+  animation: showTitle 1.3s ease-out forwards;
+}
+
+@keyframes showTitle {
+  0% { opacity: 0; transform: translateY(-50px); }
+  100% { opacity: 1; transform: translateY(0px); }
+}
+
+/* ---------------- CONTAINER ---------------- */
+.main-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* ---------------- BOOK WRAPPER ---------------- */
+.book-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  opacity: 0;
+  transform: scale(0.8);
+  transition: 1s ease-out;
+  margin-top: -10px;
+}
+
+.book-show {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+
+/* ---------------- FLIPBOOK ---------------- */
+.flipbook {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  perspective: 2000px;
+  transform-style: preserve-3d;
+}
+
+.page {
+  position: absolute;
+  width: 60%;
+  height: 100%;
+  top: 0;
+  left: 50%;
+  transform-origin: left;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: transform 1s cubic-bezier(0.45,0.05,0.55,0.95);
+  z-index: 0;
+}
+
+.page:nth-child(1) { z-index: 5; }
+.page:nth-child(2) { z-index: 4; }
+.page:nth-child(3) { z-index: 3; }
+.page:nth-child(4) { z-index: 2; }
+.page:nth-child(5) { z-index: 1; }
+
+.front, .back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 5px;
+  border: 5px solid #384a7e;
+  background: linear-gradient(90deg,#b2effc,#cbf2fb,#ecfcff,#cbf2fb,#b2effc);
+  overflow: hidden;
+}
+
+.back {
+  transform: rotateY(180deg);
+}
+
+.page img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.page.flipped {
+  transform: rotateY(-180deg);
+  z-index: 50;
+}
+
+/* ---------------- ARROWS ---------------- */
+.arrow-btn {
+  position: absolute;
+  bottom: 20px;
+  font-size: 50px;
+  cursor: pointer;
+  color: #001844;
+  text-shadow: 0 0 10px white;
+  user-select: none;
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+#prevBtn { left: 20px; }
+#nextBtn { right: 20px; }
+
+.arrow-show {
+  opacity: 1 !important;
+  pointer-events: auto;
+}
+/* ---------------- MOBILE ---------------- */
+@media (max-width:600px) {
+
+  h1 { font-size: 32px; }
+
+  body {
+    height: 90vh;         /* reduce total height */
+    overflow-y: hidden;
+  }
+
+  .book-wrapper {
+    width: 100%;
+    max-width: 400px;
+    height: 60%;
+    transform: none !important;
+    margin-top: 5px;
+    margin-bottom: 0;
+    position: relative; 
+  }
+
+  .page {
+    width: 100% !important;
+    height: 100% !important;
+    left: 0 !important;
+    border: none !important;
+  }
+
+  .back { display: none !important; }
+
+  .arrow-btn {
+    font-size:5rem;               /* smaller arrow size */
+    position: fixed;               /* fixed at bottom */
+    bottom:25%;                  /* distance from bottom of screen */
+    z-index: 999;                  
+    background: rgba(255,255,255,0.8); 
+    padding: 5px 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #000;
+    color: #001844;
+  }
+
+  #prevBtn { left: 40px; }
+  #nextBtn { right: 40px; }
+}
+.banner-wrapper {
+  width: 100%;             /* match book-wrapper width */
+  max-width: 400px;  
+   position: fixed;         /* same as book-wrapper max-width */
+  height:auto; 
+  top: 18%;
+  right:20%;
+  background: linear-gradient(90deg,#91e3f3,#e1d6f0,#91e3f3);
+  border: 3px solid #511558;
+  box-shadow: 0 0 12px #0529cc, inset 0 0 20px rgba(201,127,183,0.377), 0 0 0 6px rgba(158,8,228,0.3);
+  border-radius: 25px;
+  padding: 12px;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateX(50px) scale(0.9);
+}
+.banner-final { animation: showBanner 1.2s ease-out forwards; }
+@keyframes showBanner { to {opacity:1; transform: translateX(0) scale(1);} }
+/* SVG IMAGE */
+.ornate-svg-banner {
+  width: 30%;         /* reduce relative width */
+  max-width: 120px;   /* reduce maximum width */
+  margin: 10px auto;  /* reduce top/bottom margin */
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+}
+
+
+/* TEXT */
+.banner-text {
+  width: 90%;
+  text-align: center;
+}
+
+.banner-text h2 {
+  margin-top: 0;
+  font-family: "Merriweather", Georgia, serif;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  text-align: center;
+   padding: 0%;
+   margin-top: 0;
+  margin-bottom:5px;
+}
+
+.banner-text p {
+ font-family: Cambria;
+   font-size: clamp(1rem, 3.5vw, 1rem);
+  font-weight: bold;
+  color: rgb(64, 9, 74);
+  width: 100%;
+  display: flex;
+margin-top: 0;
+  margin-bottom:5px;
+  padding: 0%;
+ text-align: left;
+  gap: 10px;
+  word-wrap: break-word;
+  overflow-wrap:anywhere;
+  white-space: normal;
+}
+
+/* MOBILE VIEW */
+@media (max-width:600px) {
+  .banner-wrapper {
+      width: 95%;          /* almost full width */
+    height: auto;        /* let height adjust to content */
+    top: 10%;  
+    border-radius: 20px;
+    left:3%;
+  }
+
+  .ornate-svg-banner {
+    width: 70%;
+    max-width: 160px;
+  }
+
+  .banner-text {
+    width: 100%;
+    
+  }
+
+  .banner-text h2 {
+    font-size: 1.8rem;
+  }
+
+  .banner-text p {
+    font-size: 0.85rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="main-container">
+
+  <h1 id="title">GamesVille</h1>
+
+  <!-- Desktop Flipbook -->
+  <div id="bookWrapperDesktop" class="book-wrapper">
+    <div class="flipbook">
+      <div class="page">
+        <div class="front"><img src="front.jpg"></div>
+        <div class="back"><img src="f1.png"></div>
+      </div>
+      <div class="page">
+        <div class="front"><img src="f2.jpg"></div>
+        <div class="back"><img src="f3.jpg"></div>
+      </div>
+      <div class="page">
+        <div class="front"><img src="f4.jpg"></div>
+        <div class="back"><img src="f5.jpg"></div>
+      </div>
+      <div class="page">
+        <div class="front"><img src="f6.jpg"></div>
+        <div class="back"><img src="f7.jpg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Flipbook -->
+  <div id="bookWrapperMobile" class="book-wrapper" style="display:none;">
+    <div class="flipbook">
+      <div class="page"><img src="front.jpg"></div>
+      <div class="page"><img src="f1.png"></div>
+      <div class="page"><img src="f2.jpg"></div>
+      <div class="page"><img src="f3.jpg"></div>
+      <div class="page"><img src="f4.jpg"></div>
+       <div class="back"><img src="f5.jpg"></div>
+        <div class="back"><img src="f6.jpg"></div>
+         <div class="back"><img src="f7.jpg"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Arrows -->
+<div class="arrow-btn" id="prevBtn">&#8592;</div>
+<div class="arrow-btn" id="nextBtn">&#8594;</div>
+<div class="banner-wrapper" id="banner">
+  <div class="banner-text">
+    <h2 class="animate-character">Contact Us</h2>
+        <p><i class="fa fa-map-marker"style="color:blue;padding-right:3px;"></i>4/96/4/1, Machado Nagar, Ettayapuram Road, Sankaraperi Village, Tuticorin-628 002.</p>
+          <p><i class="fa fa-phone"style="color:green;padding-right:3px;"></i> 0461 2903901<br>+91 85259 32290 <br> +91 98439 99297</p>
+           <p>
+<p>
+    <i class="fa fa-envelope" style="color:red;padding-right:3px;"></i>
+    <a href="mailto:gamesvillesportsacademy@gmail.com">
+        gamesvillesportsacademy@gmail.com
+    </a>
+</p>
+
+<p>
+    <i class="fa fa-globe" aria-hidden="true" style="color:blue;padding-right:3px;"></i>
+    <a href="https://gamesville.co.in" target="_blank">
+        www.gamesville.co.in
+    </a>
+</p>
+
+<p>
+    <i class="fa fa-instagram" aria-hidden="true" style="color:rgb(190, 12, 190);padding-right:3px;"></i>
+    <a href="https://instagram.com/gamesvillethoothukudi" target="_blank">
+        www.instagram.com/gamesvillethoothukudi
+    </a>
+</p>
+
+<p>
+    <i class="fa fa-facebook-square" aria-hidden="true" style="color:blue;padding-right:3px;"></i>
+    <a href="https://facebook.com/gamesville" target="_blank">
+        www.facebook.com/gamesville
+    </a>
+</p>
+<img src="b6.jpeg" class="ornate-svg-banner" style="width:60%; max-width:300px; border-radius:15px; box-shadow:0 0 12px rgba(0,0,0,0.3);margin-left:20px;">
+  </div>
+</div>
+<script>
+
+let currentPage = 0;
+const nextBtn = document.getElementById('nextBtn');
+const prevBtn = document.getElementById('prevBtn');
+const banner = document.getElementById("banner");
+let pages, activeWrapper;
+
+/* ---------------- DEVICE CHECK ---------------- */
+function detectDevice() {
+
+  if (window.innerWidth <= 600) {
+    activeWrapper = document.getElementById('bookWrapperMobile');
+    document.getElementById('bookWrapperMobile').style.display = 'flex';
+    document.getElementById('bookWrapperDesktop').style.display = 'none';
+  } else {
+    activeWrapper = document.getElementById('bookWrapperDesktop');
+    document.getElementById('bookWrapperDesktop').style.display = 'flex';
+    document.getElementById('bookWrapperMobile').style.display = 'none';
+  }
+
+  pages = activeWrapper.querySelectorAll('.page');
+  currentPage = 0;
+
+  if (window.innerWidth > 600) {
+    pages.forEach(p => p.classList.remove('flipped'));
+  } else {
+    pages.forEach(p => p.style.display = 'block');
+  }
+
+  updateArrows();
+}
+
+/* ---------------- ARROW UPDATE ---------------- */
+function updateArrows() {
+  prevBtn.style.display = currentPage === 0 ? 'none' : 'block';
+  nextBtn.style.display = currentPage >= pages.length ? 'none' : 'block';
+}
+function goNext() {
+  if (currentPage >= pages.length) return;
+
+  if (window.innerWidth <= 600)
+    pages[currentPage].style.display = 'none';
+  else
+    pages[currentPage].classList.add('flipped');
+
+  currentPage++;
+  if (currentPage === pages.length) {
+    banner.classList.add("banner-final");
+  }
+  updateArrows();
+}
+
+function goPrev() {
+  if (currentPage <= 0) return;
+
+  currentPage--;
+
+  if (window.innerWidth <= 600)
+    pages[currentPage].style.display = 'block';
+  else
+    pages[currentPage].classList.remove('flipped');
+ banner.classList.remove("banner-final");
+  updateArrows();
+}
+
+/* ---------------- EVENTS ---------------- */
+nextBtn.onclick = goNext;
+prevBtn.onclick = goPrev;
+window.addEventListener('resize', detectDevice);
+
+detectDevice();
+
+/* ---------------- SHOW BOOK ONLY AFTER TITLE ANIMATION ---------------- */
+setTimeout(() => {
+  document.getElementById('bookWrapperDesktop').classList.add('book-show');
+  document.getElementById('bookWrapperMobile').classList.add('book-show');
+
+  nextBtn.classList.add('arrow-show');
+  prevBtn.classList.add('arrow-show');
+
+}, 1400); // WAIT FOR TITLE ANIMATION FINISH
+
+</script>
+
+</body>
+</html>
