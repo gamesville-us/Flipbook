@@ -151,7 +151,7 @@ h1 {
 
   h1 { font-size: 32px; }
 
-  body {
+   body {
     height: 90vh;         /* reduce total height */
     overflow-y: hidden;
   }
@@ -171,10 +171,10 @@ h1 {
     height: 100% !important;
     left: 0 !important;
     border: none !important;
+     background-color: #91e3f3;
   }
 
   .back { display: none !important; }
-
   .arrow-btn {
     font-size:1rem;               /* smaller arrow size */
     position: fixed;               /* fixed at bottom */
@@ -317,9 +317,9 @@ margin-top: 0;
       <div class="page"><img src="f2.jpg"></div>
       <div class="page"><img src="f3.jpg"></div>
       <div class="page"><img src="f4.jpg"></div>
-       <div class="back"><img src="f5.jpg"></div>
-        <div class="back"><img src="f6.jpg"></div>
-         <div class="back"><img src="f7.jpg"></div>
+       <div class="page"><img src="f5.jpg"></div>
+        <div class="page"><img src="f6.jpg"></div>
+         <div class="page"><img src="f7.jpg"></div>
     </div>
   </div>
 
@@ -365,7 +365,6 @@ margin-top: 0;
   </div>
 </div>
 <script>
-
 let currentPage = 0;
 const nextBtn = document.getElementById('nextBtn');
 const prevBtn = document.getElementById('prevBtn');
@@ -374,59 +373,98 @@ let pages, activeWrapper;
 
 /* ---------------- DEVICE CHECK ---------------- */
 function detectDevice() {
-
   if (window.innerWidth <= 600) {
     activeWrapper = document.getElementById('bookWrapperMobile');
     document.getElementById('bookWrapperMobile').style.display = 'flex';
     document.getElementById('bookWrapperDesktop').style.display = 'none';
+    // Show only first page initially
+    pages = activeWrapper.querySelectorAll('.page');
+    pages.forEach((p, i) => p.style.display = i === 0 ? 'block' : 'none');
   } else {
     activeWrapper = document.getElementById('bookWrapperDesktop');
     document.getElementById('bookWrapperDesktop').style.display = 'flex';
     document.getElementById('bookWrapperMobile').style.display = 'none';
-  }
-
-  pages = activeWrapper.querySelectorAll('.page');
-  currentPage = 0;
-
-  if (window.innerWidth > 600) {
+    pages = activeWrapper.querySelectorAll('.page');
     pages.forEach(p => p.classList.remove('flipped'));
-  } else {
-    pages.forEach(p => p.style.display = 'block');
   }
-
+  currentPage = 0;
   updateArrows();
 }
 
 /* ---------------- ARROW UPDATE ---------------- */
 function updateArrows() {
+  if (banner.classList.contains("banner-final")) {
+    // Banner visible → hide both arrows
+    prevBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+    return;
+  }
+
+  // Normal behavior
   prevBtn.style.display = currentPage === 0 ? 'none' : 'block';
-  nextBtn.style.display = currentPage >= pages.length ? 'none' : 'block';
+
+  if (window.innerWidth <= 600) {
+    nextBtn.style.display = currentPage < pages.length ? 'block' : 'none';
+  } else {
+    nextBtn.style.display = currentPage >= pages.length ? 'none' : 'block';
+  }
 }
+
+
+
+/* ---------------- PAGE NAVIGATION ---------------- */
 function goNext() {
-  if (currentPage >= pages.length) return;
-
-  if (window.innerWidth <= 600)
-    pages[currentPage].style.display = 'none';
-  else
-    pages[currentPage].classList.add('flipped');
-
-  currentPage++;
-  if (currentPage === pages.length) {
-    banner.classList.add("banner-final");
+  if (window.innerWidth <= 600) {
+   if (currentPage < pages.length - 1) {
+      pages[currentPage].style.display = 'none';
+      currentPage++;
+      pages[currentPage].style.display = 'block';
+    } else if (currentPage === pages.length - 1) {
+      // Hide last page immediately
+      pages[currentPage].style.display = 'none';
+      // Hide NEXT button
+      nextBtn.style.display = 'none';
+      // Show banner after delay
+      setTimeout(() => {
+        banner.classList.add("banner-final");
+      }, 500); // change delay as needed (ms)
+      currentPage++; // mark that user finished
+    }
+  } else {
+    if (currentPage < pages.length) {
+      pages[currentPage].classList.add('flipped');
+      currentPage++;
+      if (currentPage === pages.length) {
+        setTimeout(() => {
+          banner.classList.add("banner-final");
+        }, 1000);
+      }
+    }
   }
   updateArrows();
 }
 
 function goPrev() {
   if (currentPage <= 0) return;
+ /* ---------- MOBILE VIEW ---------- */
+if (window.innerWidth <= 600) {
 
-  currentPage--;
+    // Remove banner if visible (but DO NOT stop page movement)
+    if (banner.classList.contains("banner-final")) {
+        banner.classList.remove("banner-final");
+    }
 
-  if (window.innerWidth <= 600)
+    // Now move to previous page
+    currentPage--;
     pages[currentPage].style.display = 'block';
-  else
+}
+ else {
+    currentPage--;
     pages[currentPage].classList.remove('flipped');
- banner.classList.remove("banner-final");
+  }
+
+  // Remove banner if we go back
+  banner.classList.remove("banner-final");
   updateArrows();
 }
 
@@ -437,20 +475,14 @@ window.addEventListener('resize', detectDevice);
 
 detectDevice();
 
-/* ---------------- SHOW BOOK ONLY AFTER TITLE ANIMATION ---------------- */
+/* ---------------- SHOW BOOK AFTER TITLE ANIMATION ---------------- */
 setTimeout(() => {
   document.getElementById('bookWrapperDesktop').classList.add('book-show');
   document.getElementById('bookWrapperMobile').classList.add('book-show');
-
   nextBtn.classList.add('arrow-show');
   prevBtn.classList.add('arrow-show');
-
-}, 1400); // WAIT FOR TITLE ANIMATION FINISH
-
+}, 1400);
 </script>
 
 </body>
 </html>
-
-
-
